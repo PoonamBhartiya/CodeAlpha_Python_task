@@ -1,0 +1,176 @@
+TASK-2
+
+   
+Stock Portfolio Tracker
+
+Create a stock portfolio tracking tool that allows users
+to add, remove, and track the performance of their
+stock investments. Utilize financial APIs for real-time
+stock data.
+
+
+
+
+import requests
+import pandas as pd
+from prettytable import PrettyTable
+
+# API Setup
+API_KEY = "YOUR_API_KEY"  
+BASE_URL = "https://www.alphavantage.co/query"
+
+# Initialize Portfolio
+portfolio = pd.DataFrame(columns=["Symbol", "Quantity", "Purchase Price", "Current Price", "Total Value", "Gain/Loss"])
+
+# Function to fetch a real-time stock price
+def get_stock_price(symbol):
+    params = {
+        "function": "GLOBAL_QUOTE",
+        "symbol": symbol,
+        "apikey": API_KEY
+    }
+    response = requests.get(BASE_URL, params=params)
+    data = response.json()
+    if "Global Quote" in data:
+        return float(data["Global Quote"]["05. price"])
+    else:
+        print(f"Error: Could not fetch data for {symbol}")
+        return None
+
+# Add stock to the portfolio
+def add_stock():
+    symbol = input("Enter stock symbol (e.g., AAPL): ").upper()
+    quantity = int(input("Enter quantity: "))
+    purchase_price = float(input("Enter purchase price: "))
+    current_price = get_stock_price(symbol)
+    
+    if current_price:
+        total_value = quantity * current_price
+        gain_loss = (current_price - purchase_price) * quantity
+        portfolio.loc[len(portfolio)] = [symbol, quantity, purchase_price, current_price, total_value, gain_loss]
+        print(f"{symbol} added successfully!")
+
+# Remove stock from the portfolio
+def remove_stock():
+    symbol = input("Enter stock symbol to remove: ").upper()
+    global portfolio
+    portfolio = portfolio[portfolio.Symbol != symbol]
+    print(f"{symbol} removed from portfolio.")
+
+# View portfolio
+def view_portfolio():
+    global portfolio
+    table = PrettyTable()
+    table.field_names = portfolio.columns.tolist()
+    for _, row in portfolio.iterrows():
+        table.add_row(row.tolist())
+    print(table)
+
+# Update real-time stock prices
+def update_prices():
+    for i in portfolio.index:
+        symbol = portfolio.at[i, "Symbol"]
+        current_price = get_stock_price(symbol)
+        if current_price:
+            portfolio.at[i, "Current Price"] = current_price
+            portfolio.at[i, "Total Value"] = portfolio.at[i, "Quantity"] * current_price
+            portfolio.at[i, "Gain/Loss"] = (current_price - portfolio.at[i, "Purchase Price"]) * portfolio.at[i, "Quantity"]
+    print("Stock prices updated!")
+
+# Main program
+def main():
+    while True:
+        print("\nStock Portfolio Tracker")
+        print("1. Add Stock")
+        print("2. Remove Stock")
+        print("3. View Portfolio")
+        print("4. Update Prices")
+        print("5. Exit")
+        choice = input("Enter your choice: ")
+        
+        if choice == "1":
+            add_stock()
+        elif choice == "2":
+            remove_stock()
+        elif choice == "3":
+            view_portfolio()
+        elif choice == "4":
+            update_prices()
+        elif choice == "5":
+            print("Goodbye!")
+            break
+        else:
+            print("Invalid choice. Please try again.")
+
+if __name__ == "__main__":
+    main()
+
+
+output:
+Stock Portfolio Tracker
+1. Add Stock
+2. Remove Stock
+3. View Portfolio
+4. Update Prices
+5. Exit
+Enter your choice:  3
++--------+----------+----------------+---------------+-------------+-----------+
+| Symbol | Quantity | Purchase Price | Current Price | Total Value | Gain/Loss |
++--------+----------+----------------+---------------+-------------+-----------+
++--------+----------+----------------+---------------+-------------+-----------+
+
+Stock Portfolio Tracker
+1. Add Stock
+2. Remove Stock
+3. View Portfolio
+4. Update Prices
+5. Exit
+Enter your choice:  1
+Enter stock symbol (e.g., AAPL):  HP
+Enter quantity:  35
+Enter purchase price:  230000
+HP added successfully!
+
+Stock Portfolio Tracker
+1. Add Stock
+2. Remove Stock
+3. View Portfolio
+4. Update Prices
+5. Exit
+Enter your choice:  3
++--------+----------+----------------+---------------+--------------------+------------+
+| Symbol | Quantity | Purchase Price | Current Price |    Total Value     | Gain/Loss  |
++--------+----------+----------------+---------------+--------------------+------------+
+|   HP   |    35    |    230000.0    |     36.38     | 1273.3000000000002 | -8048726.7 |
++--------+----------+----------------+---------------+--------------------+------------+
+
+Stock Portfolio Tracker
+1. Add Stock
+2. Remove Stock
+3. View Portfolio
+4. Update Prices
+5. Exit
+Enter your choice:  4
+Stock prices updated!
+
+Stock Portfolio Tracker
+1. Add Stock
+2. Remove Stock
+3. View Portfolio
+4. Update Prices
+5. Exit
+Enter your choice:  3
++--------+----------+----------------+---------------+--------------------+------------+
+| Symbol | Quantity | Purchase Price | Current Price |    Total Value     | Gain/Loss  |
++--------+----------+----------------+---------------+--------------------+------------+
+|   HP   |    35    |    230000.0    |     36.38     | 1273.3000000000002 | -8048726.7 |
++--------+----------+----------------+---------------+--------------------+------------+
+
+Stock Portfolio Tracker
+1. Add Stock
+2. Remove Stock
+3. View Portfolio
+4. Update Prices
+5. Exit
+Enter your choice:  5
+Goodbye!

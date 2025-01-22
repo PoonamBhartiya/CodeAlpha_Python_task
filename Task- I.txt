@@ -1,0 +1,88 @@
+Task- I
+
+"Hangman Game"
+
+Design a text-based Hangman game. The program
+selects a random word, and the player guesses one
+letter at a time to uncover the word. You can set a
+limit on the number of incorrect guesses allowed.
+
+Program:
+
+import random
+
+# List of words
+words = ["python", "hangman", "computer", "program", "challenge"]
+
+# Choose a random word
+word_to_guess = random.choice(words).lower()  # Ensure lowercase
+print("DEBUG: The word to guess is:", word_to_guess)  # Debugging line
+
+# Initialize variables
+guessed_letters = []
+incorrect_guesses = 0
+max_attempts = 6
+word_display = ["_"] * len(word_to_guess)
+
+print("Welcome to Hangman!")
+
+# Game loop
+while incorrect_guesses < max_attempts and "_" in word_display:
+    print("\nWord to guess:", " ".join(word_display))
+    print(f"Incorrect guesses left: {max_attempts - incorrect_guesses}")
+    guess = input("Enter a letter: ").lower()  # Convert input to lowercase
+
+    if len(guess) != 1 or not guess.isalpha():
+        print("Please enter a single valid letter!")
+        continue
+
+    if guess in guessed_letters:
+        print("You already guessed that letter!")
+    elif guess in word_to_guess:
+        print("Good guess!")
+        guessed_letters.append(guess)
+        for i, letter in enumerate(word_to_guess):
+            if letter == guess:
+                word_display[i] = guess
+    else:
+        print("Wrong guess!")
+        guessed_letters.append(guess)
+        incorrect_guesses += 1
+
+# Check win or lose
+if "_" not in word_display:
+    print("\nCongratulations! You guessed the word:", word_to_guess)
+else:
+    print("\nYou lost! The word was:", word_to_guess)
+
+
+output:
+DEBUG: The word to guess is: hangman
+Welcome to Hangman!
+
+Word to guess: _ _ _ _ _ _ _
+Incorrect guesses left: 6
+Enter a letter:  h
+Good guess!
+
+Word to guess: h _ _ _ _ _ _
+Incorrect guesses left: 6
+Enter a letter:  a
+Good guess!
+
+Word to guess: h a _ _ _ a _
+Incorrect guesses left: 6
+Enter a letter:  n
+Good guess!
+
+Word to guess: h a n _ _ a n
+Incorrect guesses left: 6
+Enter a letter:  g
+Good guess!
+
+Word to guess: h a n g _ a n
+Incorrect guesses left: 6
+Enter a letter:  m
+Good guess!
+
+Congratulations! You guessed the word: hangman

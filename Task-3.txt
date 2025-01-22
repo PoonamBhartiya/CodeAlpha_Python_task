@@ -1,0 +1,90 @@
+Task-3
+Task Automation with
+Python Scripts
+
+Identify a repetitive task in your workflow and create
+Python scripts to automate it. This could include tasks
+like file organization, data cleaning, or system
+maintenance.
+
+
+
+import os
+import shutil
+
+# Organize files into folders
+def organize_files(folder_path):
+    print("Starting file organization...")
+    if not os.path.exists(folder_path):
+        print(f"The folder '{folder_path}' does not exist!")
+        return
+
+    # Create folders 
+    image_folder = os.path.join(folder_path, "Images")
+    document_folder = os.path.join(folder_path, "Documents")
+    video_folder = os.path.join(folder_path, "Videos")
+    others_folder = os.path.join(folder_path, "Others")
+
+    # Make folders 
+    os.makedirs(image_folder, exist_ok=True)
+    os.makedirs(document_folder, exist_ok=True)
+    os.makedirs(video_folder, exist_ok=True)
+    os.makedirs(others_folder, exist_ok=True)
+
+    # Move files 
+    for file_name in os.listdir(folder_path):
+        if os.path.isfile(os.path.join(folder_path, file_name)):
+            if file_name.endswith(('.jpg', '.png')):
+                shutil.move(os.path.join(folder_path, file_name), image_folder)
+            elif file_name.endswith(('.pdf', '.txt', '.docx')):
+                shutil.move(os.path.join(folder_path, file_name), document_folder)
+            elif file_name.endswith(('.mp4', '.avi')):
+                shutil.move(os.path.join(folder_path, file_name), video_folder)
+            else:
+                shutil.move(os.path.join(folder_path, file_name), others_folder)
+
+    print("File organization completed.")
+
+# Clean up the folder 
+def clean_data(folder_path):
+    print("Cleaning data...")
+    for file_name in os.listdir(folder_path):
+        file_path = os.path.join(folder_path, file_name)
+        if os.path.isfile(file_path) and os.path.getsize(file_path) == 0:
+            os.remove(file_path)
+            print(f"Removed empty file: {file_name}")
+    print("Data cleaning completed.")
+
+# removing temporary files
+
+def system_maintenance(folder_path):
+    print("Performing system maintenance...")
+    for file_name in os.listdir(folder_path):
+        if file_name.endswith(('.tmp', '.bak', '.old')):
+            os.remove(os.path.join(folder_path, file_name))
+            print(f"Deleted temporary file: {file_name}")
+    print("System maintenance completed.")
+
+# Main code to call the functions
+folder_to_organize = input("Enter the folder path you want to organize: ")
+
+if os.path.exists(folder_to_organize):
+    organize_files(folder_to_organize)
+    clean_data(folder_to_organize)
+    system_maintenance(folder_to_organize)
+else:
+    print(f"Folder '{folder_to_organize}' does not exist. Please check the path.")
+
+
+
+output:
+
+Enter the folder path you want to organize:  output_frames    # I used this folder name
+Starting file organization...
+File organization completed.
+Cleaning data...
+Data cleaning completed.
+Performing system maintenance...
+System maintenance completed.
+
+
